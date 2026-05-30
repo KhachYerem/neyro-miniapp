@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Rediq VPN</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0f1117;
+  --bg2:#181c27;
+  --bg3:#1e2333;
+  --card:#1a1f2e;
+  --card2:#222840;
+  --border:#2a3050;
+  --teal:#00c4aa;
+  --teal2:#00a08a;
+  --teal-dim:rgba(0,196,170,0.12);
+  --text:#e8eaf0;
+  --text2:#8892aa;
+  --text3:#5a6480;
+}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;font-size:14px;line-height:1.5}
+
+/* ЦЕНТРИРОВАНИЕ КОНТЕНТА И СЕТКА ПЛИШЕК */
+.main-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+  position: relative;
+}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;border-radius:9px;background:#cc3333;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:20px;height:20px;fill:#fff}
+.logo-name{font-size:18px;font-weight:700;letter-spacing:-0.3px}
+.header-actions{display:flex;gap:8px}
+.icon-btn{width:38px;height:38px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.icon-btn svg{width:18px;height:18px;stroke:var(--text2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn.support-btn svg {stroke: #00c4aa;}
+
+/* INFO CARDS */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
+.info-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+.info-card-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ic-blue{background:rgba(60,120,220,0.18)}
+.ic-green{background:rgba(0,196,140,0.15)}
+.ic-orange{background:rgba(220,140,40,0.18)}
+.ic-teal{background:rgba(0,196,170,0.15)}
+.info-card-icon svg{width:17px;height:17px;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.ic-blue svg{stroke:#5b9cf6}
+.ic-green svg{stroke:#00c48c}
+.ic-orange svg{stroke:#e08c30}
+.ic-teal svg{stroke:#00c4aa}
+.info-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:3px}
+.info-val{font-size:13px;font-weight:600;color:var(--text);word-break:break-all;line-height:1.3}
+.badge-active{display:inline-flex;align-items:center;gap:5px;background:rgba(0,196,140,0.12);border:1px solid rgba(0,196,140,0.3);color:#00c48c;font-size:12px;font-weight:600;padding:2px 8px;border-radius:20px}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:#00c48c}
+
+/* TRAFFIC WIDE */
+.traffic-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin:0 20px 6px;display:flex;align-items:center;gap:12px}
+.traffic-left{flex:1}
+.traffic-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.traffic-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3)}
+.traffic-val{font-size:13px;font-weight:600;color:var(--text)}
+.progress-track{height:6px;background:var(--bg3);border-radius:10px;overflow:hidden}
+.progress-fill{height:6px;background:linear-gradient(90deg,var(--teal),#5b9cf6);border-radius:10px;transition:width .5s}
+.traffic-pct{font-size:11px;color:var(--text3);margin-top:5px}
+
+/* INSTALL BLOCK */
+.install-block{background:var(--card);border:1px solid var(--border);border-radius:16px;margin:10px 20px 20px;padding:18px 16px}
+.install-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.install-title{font-size:17px;font-weight:700;letter-spacing:-0.2px}
+.os-select{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:7px 28px 7px 10px;font-size:13px;font-weight:500;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238892aa' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+
+/* APP TABS */
+.app-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:20px;padding-bottom:2px}
+.app-tabs::-webkit-scrollbar{display:none}
+.app-tab{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:9px 14px;cursor:pointer;white-space:nowrap;font-size:13px;font-weight:500;color:var(--text2);transition:all .15s;position:relative;flex-shrink:0}
+.app-tab.active{background:var(--bg2);border-color:var(--teal);color:var(--text)}
+.app-tab-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);position:absolute;top:7px;left:7px}
+.app-tab.active .app-tab-dot{background:var(--teal)}
+
+/* STEPS */
+.steps{position:relative;padding-left:0}
+.step{display:flex;gap:14px;margin-bottom:24px;position:relative}
+.step:last-child{margin-bottom:0}
+.step-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.step-icon{width:38px;height:38px;border-radius:50%;background:var(--teal-dim);border:1.5px solid var(--teal);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1}
+.step-icon svg{width:17px;height:17px;stroke:var(--teal);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.step-icon.done{background:rgba(0,196,140,0.12);border-color:#00c48c}
+.step-icon.done svg{stroke:#00c48c}
+.step-line{width:1.5px;flex:1;background:var(--border);margin-top:6px;min-height:16px}
+.step-body{flex:1;padding-top:7px}
+.step-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
+.step-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px}
+
+/* BUTTONS */
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn-teal{display:inline-flex;align-items:center;gap:6px;background:var(--teal-dim);border:1px solid rgba(0,196,170,0.4);color:var(--teal);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;text-decoration:none}
+.btn-teal:active{opacity:0.75}
+.btn-teal svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn-outline{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.btn-outline:active{opacity:0.7}
+.btn-outline svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* WARN */
+.warn-box{display:flex;gap:10px;background:rgba(220,140,40,0.08);border:1px solid rgba(220,140,40,0.25);border-radius:10px;padding:10px 12px;font-size:12.5px;color:#c8963a;line-height:1.55;margin-top:12px}
+.warn-box svg{width:15px;height:15px;stroke:#c8963a;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px}
+
+/* ЯЗЫКОВОЙ ПЕРЕКЛЮЧАТЕЛЬ (МУЛЬТИЯЗЫК) */
+.lang-selector-container {
+  display: flex;
+  justify-content: center;
+  margin: 25px 0 10px;
+  position: relative;
+}
+.lang-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  padding: 8px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.lang-dropdown {
+  display: none;
+  position: absolute;
+  bottom: 45px;
+  background: #1c2130;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 6px;
+  min-width: 140px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  z-index: 100;
+}
+.lang-dropdown.show { display: block; }
+.lang-opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.lang-opt:hover { background: var(--bg3); }
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:rgba(0,196,170,0.9);color:#fff;padding:9px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;z-index:999}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="main-wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L3 7l2 13 7 3 7-3 2-13z"/><path d="M12 7v7M9 10h6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+      <span class="logo-name">Rediq VPN</span>
+    </div>
+    <div class="header-actions">
+      <div class="icon-btn" onclick="copySubLink()">
+        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+      </div>
+      <!-- Кнопка Поддержки из image_bc40db.png -->
+      <div class="icon-btn support-btn" onclick="openSupport()">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS CARDS -->
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="info-card-icon ic-blue"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <div>
+        <div class="info-label" id="lbl-user">Имя пользователя</div>
+        <div class="info-val" id="el-user" style="font-size:11px;word-break:break-all">tg_5123253105_trial_7551cf</div>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon ic-green"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div>
+        <div class="info-label" id="lbl-status">Статус</div>
+        <div class="info-val"><span class="badge-active"><span class="badge-dot"></span><span id="el-status">Активна</span></span></div>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon ic-orange"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div>
+        <div class="info-label" id="lbl-expires">Истекает</div>
+        <div class="info-val" id="el-expires">30 мая, 2026</div>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-icon ic-teal"><svg viewBox="0 0 24 24"><polyline points="7 16 12 21 17 16"/><polyline points="7 8 12 3 17 8"/><line x1="12" y1="21" x2="12" y2="3"/></svg></div>
+      <div>
+        <div class="info-label" id="lbl-traffic">Трафик</div>
+        <div class="info-val" id="el-traffic">0 / 3.00 GiB</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRAFFIC BAR -->
+  <div class="traffic-card" style="margin-bottom:12px">
+    <div class="traffic-left">
+      <div class="traffic-label-row">
+        <span class="traffic-label" id="lbl-used">Использовано</span>
+        <span class="traffic-val" id="el-pct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="el-bar" style="width:0%"></div></div>
+      <div class="traffic-pct" id="el-bar-label">0.00 из 3.00 GiB</div>
+    </div>
+  </div>
+
+  <!-- INSTALL BLOCK -->
+  <div class="install-block">
+    <div class="install-header">
+      <span class="install-title" id="lbl-install">Установка</span>
+      <select class="os-select" id="os-select" onchange="onOsChange()">
+        <option value="windows">⊞ Windows</option>
+        <option value="android">⊕ Android</option>
+        <option value="ios">⌘ iOS</option>
+        <option value="macos">⌘ macOS</option>
+        <option value="linux">⊛ Linux</option>
+      </select>
+    </div>
+
+    <div class="app-tabs" id="app-tabs"></div>
+    <div id="step-content"></div>
+  </div>
+
+  <!-- МУЛЬТИЯЗЫЧНАЯ КНОПКА ПО СЕНТРУ (как на image_bc4094.jpg) -->
+  <div class="lang-selector-container">
+    <button class="lang-btn" onclick="toggleLangDropdown(event)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span id="current-lang-text">Русский</span>
+    </button>
+    <div class="lang-dropdown" id="lang-dropdown">
+      <div class="lang-opt" onclick="changeLang('en')">🇺🇸 English</div>
+      <div class="lang-opt" onclick="changeLang('ru')">🇷🇺 Русский</div>
+      <div class="lang-opt" onclick="changeLang('zh')">🇨🇳 中文</div>
+      <div class="lang-opt" onclick="changeLang('fa')">🇮🇷 فارسی</div>
+      <div class="lang-opt" onclick="changeLang('fr')">🇫🇷 Français</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">Ссылка скопирована!</div>
+
+<script>
+const tg = window.Telegram && window.Telegram.WebApp;
+if(tg){tg.ready();tg.expand();}
+
+// Параметры
+const P = new URLSearchParams(location.search);
+const username = P.get('username')||'tg_5123253105_trial_7551cf';
+const expires  = P.get('expires') ||'30 мая, 2026';
+const used     = parseFloat(P.get('used')||'0');
+const total    = parseFloat(P.get('total')||'3');
+const subUrl   = P.get('sub_url')||'';
+// URL Поддержки
+const supportUrl = P.get('support_url') || 'https://t.me/your_vpn_support_bot'; 
+
+// Локализация текстов
+const LANG_DATA = {
+  ru: {
+    user: "Имя пользователя", status: "Статус", active: "Активна", expires: "Истекает",
+    traffic: "Трафик", used: "Использовано", install: "Установка", copied: "Ссылка скопирована!",
+    from: "из", step1: "Установка приложения", step1_desc: "Выберите подходящую версию для вашего устройства, нажмите на кнопку ниже и установите приложение.",
+    step2: "Добавление подписки", step2_desc: "Нажмите кнопку ниже, чтобы добавить подписку", step2_btn: "Добавить подписку",
+    step3: "Если подписка не добавилась", step3_btn: "Получить ссылку",
+    step4: "Подключение и использование", warn_clash: "Если вы ранее использовали Clash Verge Rev — удалите его перед установкой Koala Clash."
+  },
+  en: {
+    user: "Username", status: "Status", active: "Active", expires: "Expires",
+    traffic: "Traffic", used: "Used", install: "Installation", copied: "Link copied!",
+    from: "of", step1: "Install Application", step1_desc: "Choose the version for your device, click the button below and install the application.",
+    step2: "Add Subscription", step2_desc: "Click the button below to automatically add your subscription.", step2_btn: "Add Subscription",
+    step3: "If sub wasn't added", step3_btn: "Get Link",
+    step4: "Connection & Usage", warn_clash: "If you previously used Clash Verge Rev, please uninstall it before installing Koala Clash."
+  },
+  zh: {
+    user: "用户名", status: "状态", active: "激活", expires: "到期时间",
+    traffic: "流量", used: "已用流量", install: "安装教程", copied: "链接已复制!",
+    from: "共", step1: "安装应用程序", step1_desc: "选择适合您设备的版本，点击下方按钮进行安装。",
+    step2: "添加订阅", step2_desc: "点击下方按钮以自动添加您的订阅。", step2_btn: "添加订阅",
+    step3: "如果未成功添加订阅", step3_btn: "获取链接",
+    step4: "连接与使用", warn_clash: "如果您之前使用过 Clash Verge Rev，请在安装 Koala Clash 之前将其卸载。"
+  },
+  fa: {
+    user: "نام کاربری", status: "وضعیت", active: "فعال", expires: "تاریخ انقضا",
+    traffic: "ترافیک", used: "مصرف شده", install: "آموزش نصب", copied: "لینک کپی شد!",
+    from: "از", step1: "نصب برنامه", step1_desc: "نسخه مناسب دستگاه خود را انتخاب کرده، روی دکمه زیر کلیک و برنامه را نصب کنید.",
+    step2: "افزودن اشتراک", step2_desc: "برای افزودن خودکار اشتراک، روی دکمه زیر کلیک کنید.", step2_btn: "افزودن اشتراک",
+    step3: "اگر اشتراک اضافه نشد", step3_btn: "دریافت لینک",
+    step4: "اتصال و استفاده", warn_clash: "اگر قبلاً از Clash Verge Rev استفاده کرده‌اید، لطفاً قبل از نصب Koala Clash آن را پاک کنید."
+  },
+  fr: {
+    user: "Nom d'utilisateur", status: "Statut", active: "Actif", expires: "Expire le",
+    traffic: "Trafic", used: "Utilisé", install: "Installation", copied: "Lien copié!",
+    from: "sur", step1: "Installer l'application", step1_desc: "Choisissez la version pour votre appareil, cliquez sur le bouton ci-dessous et installez l'application.",
+    step2: "Ajouter l'abonnement", step2_desc: "Cliqueves sur le bouton ci-dessous pour ajouter automatiquement votre abonnement.", step2_btn: "Ajouter l'abonnement",
+    step3: "Si l'abonnement n'a pas été ajouté", step3_btn: "Obtenir le lien",
+    step4: "Connexion & Utilisation", warn_clash: "Si vous utilisiez Clash Verge Rev auparavant, veuillez le désinstaller avant d'installer Koala Clash."
+  }
+};
+
+let currentLang = 'ru';
+let curOs='windows', curApp=null;
+
+// Иконки SVG для шагов
+const svgDl = `<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+const svgSub = `<svg viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="3" x2="12" y2="21"/><path d="M20 9a8 8 0 00-16 0"/></svg>`;
+const svgSet = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M21 12h-2M5 12H3M12 21v-2M12 5V3"/></svg>`;
+const svgOk  = `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`;
+const svgExt = `<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
+const svgCopy = `<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
+
+// Функция открытия ссылки поддержки
+function openSupport() {
+  if(tg) tg.openTelegramLink(supportUrl);
+  else window.open(supportUrl, '_blank');
+}
+
+function toggleLangDropdown(e) {
+  e.stopPropagation();
+  document.getElementById('lang-dropdown').classList.toggle('show');
+}
+
+function changeLang(lang) {
+  currentLang = lang;
+  document.getElementById('lang-dropdown').classList.remove('show');
+  
+  const textMap = { en: "English", ru: "Русский", zh: "中文", fa: "فارسی", fr: "Français" };
+  document.getElementById('current-lang-text').textContent = textMap[lang];
+  
+  updateUIStrings();
+  renderSteps();
+}
+
+function updateUIStrings() {
+  const l = LANG_DATA[currentLang];
+  document.getElementById('lbl-user').textContent = l.user;
+  document.getElementById('lbl-status').textContent = l.status;
+  document.getElementById('el-status').textContent = l.active;
+  document.getElementById('lbl-expires').textContent = l.expires;
+  document.getElementById('lbl-traffic').textContent = l.traffic;
+  document.getElementById('lbl-used').textContent = l.used;
+  document.getElementById('lbl-install').textContent = l.install;
+  
+  document.getElementById('el-user').textContent = username;
+  document.getElementById('el-expires').textContent = expires;
+  document.getElementById('el-traffic').textContent = used.toFixed(2)+' / '+total.toFixed(2)+' GiB';
+  document.getElementById('el-bar-label').textContent = used.toFixed(2)+' ' + l.from + ' '+total.toFixed(2)+' GiB';
+}
+
+// Конфиг ОС
+const OS = {
+  windows:{
+    apps:[
+      {id:'flclashx', name:'FlClashX', icon:'X', dot:true},
+      {id:'koala',    name:'Koala Clash', icon:'🐨', dot:true},
+      {id:'prizrak',  name:'Prizrak-Box', icon:'👻'},
+      {id:'happ',     name:'Happ', icon:'H'},
+    ],
+    steps(app){
+      const l = LANG_DATA[currentLang];
+      const dlBtns = {
+        flclashx: [['Windows (Установщик)','https://github.com/chen08209/FlClash/releases']],
+        koala:    [['Windows (Установщик)','https://github.com/KoalaSocks/KoalaClash/releases']],
+        prizrak:  [['Скачать','https://github.com/hiddify/hiddify-app/releases']],
+        happ:     [['Скачать','https://happtun.com']],
+      }[app]||[];
+      const warn = (app==='koala')?`<div class="warn-box"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>${l.warn_clash}</div>`:'';
+      return `
+        <div class="step">
+          <div class="step-left"><div class="step-icon">${svgDl}</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">${l.step1}</div>
+            <div class="step-desc">${l.step1_desc}</div>
+            <div class="btn-row">${dlBtns.map(([t,u])=>`<a class="btn-teal" href="${u}" target="_blank">${svgExt}${t}</a>`).join('')}</div>
+            ${warn}
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-icon">${svgSub}</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">${l.step2}</div>
+            <div class="step-desc">${l.step2_desc}</div>
+            <div class="btn-row"><button class="btn-teal" onclick="addSub()">${svgSub}&nbsp;${l.step2_btn}</button></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-icon">${svgSet}</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">${l.step3}</div>
+            <div class="btn-row"><button class="btn-outline" onclick="copySubLink()">${svgCopy}&nbsp;${l.step3_btn}</button></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-icon done">${svgOk}</div></div>
+          <div class="step-body">
+            <div class="step-title">${l.step4}</div>
+          </div>
+        </div>`;
+    }
+  },
+  android:{
+    apps:[
+      {id:'happ',   name:'Happ',       icon:'H', dot:true},
+      {id:'flclash',name:'FlClashX',   icon:'X', dot:true},
+    ],
+    steps(app){
+      const l = LANG_DATA[currentLang];
+      return `
+        <div class="step">
+          <div class="step-left"><div class="step-icon">${svgDl}</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">${l.step1}</div>
+            <div class="step-desc">${l.step1_desc}</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-icon">${svgSub}</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">${l.step2}</div>
+            <div class="btn-row"><button class="btn-teal" onclick="addSub()">${svgSub}&nbsp;${l.step2_btn}</button></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-icon done">${svgOk}</div></div>
+          <div class="step-body">
+            <div class="step-title">${l.step4}</div>
+          </div>
+        </div>`;
+    }
+  },
+  ios:{
+    apps:[
+      {id:'happ',       name:'Happ',        icon:'H', dot:true},
+      {id:'stash',      name:'Stash',       icon:'S'},
+    ],
+    steps(app){
+      const l = LANG_DATA[currentLang];
+      return `
+        <div class="step">
+          <div class="step-left"><div class="step-icon">${svgDl}</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">${l.step1}</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-icon">${svgSub}</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">${l.step2}</div>
+            <div class="btn-row"><button class="btn-teal" onclick="addSub()">${svgSub}&nbsp;${l.step2_btn}</button></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-icon done">${svgOk}</div></div>
+          <div class="step-body">
+            <div class="step-title">${l.step4}</div>
+          </div>
+        </div>`;
+    }
+  },
+  macos:{
+    apps:[{id:'happ', name:'Happ', icon:'H', dot:true}],
+    steps(app){
+      const l = LANG_DATA[currentLang];
+      return `<div class="step"><div class="step-body"><div class="step-title">${l.step1}</div></div></div>`;
+    }
+  },
+  linux:{
+    apps:[{id:'flclash', name:'FlClashX', icon:'X', dot:true}],
+    steps(app){
+      const l = LANG_DATA[currentLang];
+      return `<div class="step"><div class="step-body"><div class="step-title">${l.step1}</div></div></div>`;
+    }
+  }
+};
+
+window.addEventListener('click', () => {
+  document.getElementById('lang-dropdown').classList.remove('show');
+});
+
+function renderOs(os){
+  curOs=os; curApp=null;
+  const cfg=OS[os];
+  const tabs=document.getElementById('app-tabs');
+  tabs.innerHTML=cfg.apps.map((a,i)=>`
+    <div class="app-tab${i===0?' active':''}" onclick="selectApp('${a.id}',this)">
+      ${a.dot?`<span class="app-tab-dot"></span>`:''}
+      <span style="font-size:16px">${a.icon}</span>
+      <span>${a.name}</span>
+    </div>`).join('');
+  curApp=cfg.apps[0].id;
+  renderSteps();
+}
+
+function selectApp(id, el){
+  document.querySelectorAll('.app-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  curApp=id;
+  renderSteps();
+}
+
+function renderSteps(){
+  document.getElementById('step-content').innerHTML = OS[curOs].steps(curApp);
+}
+
+function onOsChange(){
+  renderOs(document.getElementById('os-select').value);
+}
+
+function addSub(){
+  const link = subUrl || location.href;
+  const clashLink = 'clash://install-config?url='+encodeURIComponent(link);
+  if(tg) tg.openLink(clashLink);
+  else location.href=clashLink;
+}
+
+function copySubLink(){
+  const link = subUrl || location.href;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(link).then(()=>showToast(LANG_DATA[currentLang].copied));
+  } else {
+    const t=document.createElement('textarea');
+    t.value=link; document.body.appendChild(t); t.select();
+    document.execCommand('copy'); document.body.removeChild(t);
+    showToast(LANG_DATA[currentLang].copied);
+  }
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// Запуск
+updateUIStrings();
+renderOs('windows');
+</script>
+</body>
+</html>
