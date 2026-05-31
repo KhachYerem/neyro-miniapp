@@ -3,618 +3,266 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Rediq VPN</title>
+<title>Neyro VPN</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#0f1117;
-  --bg2:#181c27;
-  --bg3:#1e2333;
-  --card:#1a1f2e;
-  --card2:#222840;
-  --border:#2a3050;
-  --teal:#00c4aa;
-  --teal2:#00a08a;
-  --teal-dim:rgba(0,196,170,0.12);
-  --text:#e8eaf0;
-  --text2:#8892aa;
-  --text3:#5a6480;
+  --bg:#0d1117;--bg2:#161b22;--bg3:#1c2230;--card:#161b22;--card2:#1c2230;
+  --border:#21293a;--teal:#00d4b8;--teal-dim:rgba(0,212,184,0.10);
+  --text:#e6edf3;--text2:#7d8590;--text3:#3d4d6a;
+  --orange:#f0903a;--blue:#4d9fff;--green:#3fb950;--red:#f85149;
 }
-html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;font-size:14px;line-height:1.5}
-
-/* ЦЕНТРИРОВАНИЕ КОНТЕНТА И СЕТКА ПЛИШЕК */
-.main-wrapper {
-  max-width: 600px;
-  margin: 0 auto;
-  padding-bottom: 80px;
-  position: relative;
-}
-
-/* HEADER */
-.header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;min-height:100vh;font-size:14px;line-height:1.5;overflow-x:hidden}
+.main-wrapper{max-width:600px;margin:0 auto;padding-bottom:80px}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}
 .logo{display:flex;align-items:center;gap:10px}
-.logo-icon{width:34px;height:34px;border-radius:9px;background:#cc3333;display:flex;align-items:center;justify-content:center}
-.logo-icon svg{width:20px;height:20px;fill:#fff}
-.logo-name{font-size:18px;font-weight:700;letter-spacing:-0.3px}
+.logo-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#cc2244,#990033);display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:18px;height:18px;fill:#fff}
+.logo-name{font-size:17px;font-weight:700}
 .header-actions{display:flex;gap:8px}
-.icon-btn{width:38px;height:38px;border-radius:10px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer}
-.icon-btn svg{width:18px;height:18px;stroke:var(--text2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.icon-btn.support-btn svg {stroke: #00c4aa;}
+.icon-btn{width:36px;height:36px;border-radius:9px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.icon-btn svg{width:16px;height:16px;stroke:var(--text2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn.teal svg{stroke:var(--teal)}
+.cards-section{padding:16px 20px 8px}
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat-card{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px}
+.stat-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ic-blue{background:rgba(77,159,255,0.18)}.ic-blue svg{stroke:#4d9fff}
+.ic-green{background:rgba(63,185,80,0.18)}.ic-green svg{stroke:#3fb950}
+.ic-orange{background:rgba(240,144,58,0.18)}.ic-orange svg{stroke:#f0903a}
+.ic-teal{background:rgba(0,212,184,0.15)}.ic-teal svg{stroke:var(--teal)}
+.stat-icon svg{width:16px;height:16px;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.stat-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:4px}
+.stat-val{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;word-break:break-all}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600}
+.badge-dot{width:6px;height:6px;border-radius:50%}
+.badge-active{color:#3fb950}.badge-active .badge-dot{background:#3fb950;animation:pulse 2s infinite}
+.badge-expired{color:var(--red)}.badge-expired .badge-dot{background:var(--red)}
+.badge-nosub{color:var(--text2)}.badge-nosub .badge-dot{background:var(--text2)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.traffic-section{margin:8px 20px;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.traffic-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.traf-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)}
+.traf-pct{font-size:12px;font-weight:700;color:var(--text)}
+.bar-bg{height:4px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.bar-fg{height:4px;background:linear-gradient(90deg,var(--teal),#4d9fff);border-radius:4px;transition:width .7s ease}
+.traf-sub{font-size:11.5px;color:var(--text2);margin-top:6px}
+.install-section{margin:10px 20px 0;background:var(--card2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.install-head{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px}
+.install-title{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.os-select{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:6px 24px 6px 10px;font-size:12.5px;font-weight:500;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%237d8590' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center}
+.tabs-scroll{padding:0 16px 14px;overflow-x:auto;scrollbar-width:none}
+.tabs-scroll::-webkit-scrollbar{display:none}
+.tabs-row{display:flex;gap:8px;width:max-content}
 
-/* INFO CARDS */
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px}
-.info-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
-.info-card-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ic-blue{background:rgba(60,120,220,0.18)}
-.ic-green{background:rgba(0,196,140,0.15)}
-.ic-orange{background:rgba(220,140,40,0.18)}
-.ic-teal{background:rgba(0,196,170,0.15)}
-.info-card-icon svg{width:17px;height:17px;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none}
-.ic-blue svg{stroke:#5b9cf6}
-.ic-green svg{stroke:#00c48c}
-.ic-orange svg{stroke:#e08c30}
-.ic-teal svg{stroke:#00c4aa}
-.info-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3);margin-bottom:3px}
-.info-val{font-size:13px;font-weight:600;color:var(--text);word-break:break-all;line-height:1.3}
-.badge-active{display:inline-flex;align-items:center;gap:5px;background:rgba(0,196,140,0.12);border:1px solid rgba(0,196,140,0.3);color:#00c48c;font-size:12px;font-weight:600;padding:2px 8px;border-radius:20px}
-.badge-dot{width:6px;height:6px;border-radius:50%;background:#00c48c}
-
-/* TRAFFIC WIDE */
-.traffic-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin:0 20px 6px;display:flex;align-items:center;gap:12px}
-.traffic-left{flex:1}
-.traffic-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.traffic-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text3)}
-.traffic-val{font-size:13px;font-weight:600;color:var(--text)}
-.progress-track{height:6px;background:var(--bg3);border-radius:10px;overflow:hidden}
-.progress-fill{height:6px;background:linear-gradient(90deg,var(--teal),#5b9cf6);border-radius:10px;transition:width .5s}
-.traffic-pct{font-size:11px;color:var(--text3);margin-top:5px}
-
-/* INSTALL BLOCK */
-.install-block{background:var(--card);border:1px solid var(--border);border-radius:16px;margin:10px 20px 20px;padding:18px 16px}
-.install-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.install-title{font-size:17px;font-weight:700;letter-spacing:-0.2px}
-.os-select{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:7px 28px 7px 10px;font-size:13px;font-weight:500;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238892aa' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
-
-/* APP TABS */
-.app-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-bottom:20px;padding-bottom:2px}
-.app-tabs::-webkit-scrollbar{display:none}
-.app-tab{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:9px 14px;cursor:pointer;white-space:nowrap;font-size:13px;font-weight:500;color:var(--text2);transition:all .15s;position:relative;flex-shrink:0}
-.app-tab.active{background:var(--bg2);border-color:var(--teal);color:var(--text)}
-.app-tab-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);position:absolute;top:7px;left:7px}
-.app-tab.active .app-tab-dot{background:var(--teal)}
+/* APP TAB — точно как у них */
+.app-tab{display:flex;align-items:center;background:var(--bg3);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;white-space:nowrap;position:relative;overflow:hidden;height:40px;padding:0 10px 0 14px;gap:8px}
+.app-tab.active{border-color:var(--teal);background:rgba(0,212,184,0.06)}
+.tab-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);position:absolute;top:5px;left:5px;flex-shrink:0}
+.app-tab.active .tab-dot{background:var(--teal)}
+.tab-name{font-size:13px;font-weight:500;color:var(--text2)}
+.app-tab.active .tab-name{color:var(--text)}
+.tab-icon-wrap{width:32px;height:32px;border-radius:8px;background:var(--bg2);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:4px}
+.tab-icon-wrap svg{width:20px;height:20px}
+.app-tab.active .tab-icon-wrap{background:rgba(0,212,184,0.08)}
 
 /* STEPS */
-.steps{position:relative;padding-left:0}
-.step{display:flex;gap:14px;margin-bottom:24px;position:relative}
+.steps-wrap{padding:0 16px 18px}
+.step{display:flex;gap:14px;margin-bottom:24px}
 .step:last-child{margin-bottom:0}
-.step-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
-.step-icon{width:38px;height:38px;border-radius:50%;background:var(--teal-dim);border:1.5px solid var(--teal);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1}
-.step-icon svg{width:17px;height:17px;stroke:var(--teal);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.step-icon.done{background:rgba(0,196,140,0.12);border-color:#00c48c}
-.step-icon.done svg{stroke:#00c48c}
-.step-line{width:1.5px;flex:1;background:var(--border);margin-top:6px;min-height:16px}
+.step-left{display:flex;flex-direction:column;align-items:center;width:38px;flex-shrink:0}
+.s-icon{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.s-dl{background:linear-gradient(135deg,#22243a,#1b1d2e);border:1px solid rgba(151,117,250,0.4);box-shadow:rgba(151,117,250,0.15) 0 0 20px inset}
+.s-dl svg{stroke:#9775fa}
+.s-add{background:linear-gradient(135deg,#182b38,#15222a);border:1px solid rgba(34,211,238,0.4);box-shadow:rgba(34,211,238,0.15) 0 0 20px inset}
+.s-add svg{stroke:#22d3ee}
+.s-warn{background:linear-gradient(135deg,#182b2f,#152225);border:1px solid rgba(32,201,151,0.4);box-shadow:rgba(32,201,151,0.15) 0 0 20px inset}
+.s-warn svg{stroke:#20c997}
+.s-ok{background:linear-gradient(135deg,#182b2f,#152225);border:1px solid rgba(32,201,151,0.4);box-shadow:rgba(32,201,151,0.15) 0 0 20px inset}
+.s-ok svg{stroke:#20c997}
+.s-icon svg{width:18px;height:18px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.step-line{width:2px;flex:1;background:var(--border);margin-top:6px;min-height:16px}
 .step-body{flex:1;padding-top:7px}
-.step-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
-.step-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px}
-
-/* BUTTONS */
+.step-title{font-size:13.5px;font-weight:600;color:#fff;margin-bottom:5px}
+.step-desc{font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:10px}
 .btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.btn-teal{display:inline-flex;align-items:center;gap:6px;background:var(--teal-dim);border:1px solid rgba(0,196,170,0.4);color:var(--teal);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;text-decoration:none}
-.btn-teal:active{opacity:0.75}
-.btn-teal svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.btn-outline{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
-.btn-outline:active{opacity:0.7}
-.btn-outline svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-
-/* WARN */
-.warn-box{display:flex;gap:10px;background:rgba(220,140,40,0.08);border:1px solid rgba(220,140,40,0.25);border-radius:10px;padding:10px 12px;font-size:12.5px;color:#c8963a;line-height:1.55;margin-top:12px}
-.warn-box svg{width:15px;height:15px;stroke:#c8963a;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px}
-
-/* ЯЗЫКОВОЙ ПЕРЕКЛЮЧАТЕЛЬ (МУЛЬТИЯЗЫК) */
-.lang-selector-container {
-  display: flex;
-  justify-content: center;
-  margin: 25px 0 10px;
-  position: relative;
-}
-.lang-btn {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  color: var(--text2);
-  padding: 8px 16px;
-  border-radius: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 500;
-}
-.lang-dropdown {
-  display: none;
-  position: absolute;
-  bottom: 45px;
-  background: #1c2130;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 6px;
-  min-width: 140px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-  z-index: 100;
-}
-.lang-dropdown.show { display: block; }
-.lang-opt {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  color: var(--text);
-  cursor: pointer;
-  border-radius: 8px;
-  font-size: 13px;
-}
-.lang-opt:hover { background: var(--bg3); }
-
-/* TOAST */
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:rgba(0,196,170,0.9);color:#fff;padding:9px 20px;border-radius:20px;font-size:13px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;z-index:999}
+.btn-teal{display:inline-flex;align-items:center;gap:6px;background:rgba(0,212,184,0.1);border:1px solid transparent;color:#22d3ee;border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:500;cursor:pointer;text-decoration:none}
+.btn-teal svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn-ghost{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:7px 14px;font-size:12.5px;font-weight:500;cursor:pointer;text-decoration:none}
+.btn-ghost svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.warn-box{display:flex;gap:9px;background:rgba(240,144,58,0.07);border:1px solid rgba(240,144,58,0.22);border-radius:9px;padding:9px 11px;font-size:12px;color:#d4813a;line-height:1.6;margin-top:10px}
+.warn-box svg{width:14px;height:14px;stroke:#d4813a;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px}
+.lang-wrap{display:flex;justify-content:center;padding:22px 0 10px;position:relative}
+.lang-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:7px 16px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:500}
+.lang-dropdown{display:none;position:absolute;bottom:48px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:6px;min-width:150px;box-shadow:0 16px 40px rgba(0,0,0,.7);z-index:100}
+.lang-dropdown.show{display:block}
+.lang-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;color:var(--text);cursor:pointer;border-radius:8px;font-size:13px}
+.lang-opt:hover{background:var(--bg3)}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--teal);color:#0d1117;padding:9px 20px;border-radius:20px;font-size:13px;font-weight:700;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;z-index:999}
 .toast.show{opacity:1}
 </style>
 </head>
 <body>
-
 <div class="main-wrapper">
-
-  <!-- HEADER -->
   <div class="header">
     <div class="logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 2L3 7l2 13 7 3 7-3 2-13z"/><path d="M12 7v7M9 10h6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
-      </div>
-      <span class="logo-name">Rediq VPN</span>
+      <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 2L3 7l2 13 7 3 7-3 2-13z"/><path d="M12 7v7M9 10h6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg></div>
+      <span class="logo-name">Neyro VPN</span>
     </div>
     <div class="header-actions">
-      <div class="icon-btn" onclick="copySubLink()">
-        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-      </div>
-      <!-- Кнопка Поддержки из image_bc40db.png -->
-      <div class="icon-btn support-btn" onclick="openSupport()">
-        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-      </div>
+      <div class="icon-btn" onclick="copySubLink()"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
+      <div class="icon-btn teal" onclick="openSupport()"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
     </div>
   </div>
-
-  <!-- STATUS CARDS -->
-  <div class="info-grid">
-    <div class="info-card">
-      <div class="info-card-icon ic-blue"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-      <div>
-        <div class="info-label" id="lbl-user">Имя пользователя</div>
-        <div class="info-val" id="el-user" style="font-size:11px;word-break:break-all">tg_5123253105_trial_7551cf</div>
-      </div>
-    </div>
-    <div class="info-card">
-      <div class="info-card-icon ic-green"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div>
-        <div class="info-label" id="lbl-status">Статус</div>
-        <div class="info-val"><span class="badge-active"><span class="badge-dot"></span><span id="el-status">Активна</span></span></div>
-      </div>
-    </div>
-    <div class="info-card">
-      <div class="info-card-icon ic-orange"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-      <div>
-        <div class="info-label" id="lbl-expires">Истекает</div>
-        <div class="info-val" id="el-expires">30 мая, 2026</div>
-      </div>
-    </div>
-    <div class="info-card">
-      <div class="info-card-icon ic-teal"><svg viewBox="0 0 24 24"><polyline points="7 16 12 21 17 16"/><polyline points="7 8 12 3 17 8"/><line x1="12" y1="21" x2="12" y2="3"/></svg></div>
-      <div>
-        <div class="info-label" id="lbl-traffic">Трафик</div>
-        <div class="info-val" id="el-traffic">0 / 3.00 GiB</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TRAFFIC BAR -->
-  <div class="traffic-card" style="margin-bottom:12px">
-    <div class="traffic-left">
-      <div class="traffic-label-row">
-        <span class="traffic-label" id="lbl-used">Использовано</span>
-        <span class="traffic-val" id="el-pct">0%</span>
-      </div>
-      <div class="progress-track"><div class="progress-fill" id="el-bar" style="width:0%"></div></div>
-      <div class="traffic-pct" id="el-bar-label">0.00 из 3.00 GiB</div>
-    </div>
-  </div>
-
-  <!-- INSTALL BLOCK -->
-  <div class="install-block">
-    <div class="install-header">
-      <span class="install-title" id="lbl-install">Установка</span>
-      <select class="os-select" id="os-select" onchange="onOsChange()">
-        <option value="windows">⊞ Windows</option>
-        <option value="android">⊕ Android</option>
-        <option value="ios">⌘ iOS</option>
-        <option value="macos">⌘ macOS</option>
-        <option value="linux">⊛ Linux</option>
-      </select>
-    </div>
-
-    <div class="app-tabs" id="app-tabs"></div>
-    <div id="step-content"></div>
-  </div>
-
-  <!-- МУЛЬТИЯЗЫЧНАЯ КНОПКА ПО СЕНТРУ (как на image_bc4094.jpg) -->
-  <div class="lang-selector-container">
-    <button class="lang-btn" onclick="toggleLangDropdown(event)">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-      <span id="current-lang-text">Русский</span>
-    </button>
-    <div class="lang-dropdown" id="lang-dropdown">
-      <div class="lang-opt" onclick="changeLang('en')">🇺🇸 English</div>
-      <div class="lang-opt" onclick="changeLang('ru')">🇷🇺 Русский</div>
-      <div class="lang-opt" onclick="changeLang('zh')">🇨🇳 中文</div>
-      <div class="lang-opt" onclick="changeLang('fa')">🇮🇷 فارسی</div>
-      <div class="lang-opt" onclick="changeLang('fr')">🇫🇷 Français</div>
-    </div>
-  </div>
-
+  <div id="app"></div>
 </div>
-
-<div class="toast" id="toast">Ссылка скопирована!</div>
-
+<div class="toast" id="toast"></div>
 <script>
-const tg = window.Telegram && window.Telegram.WebApp;
+const tg=window.Telegram?.WebApp;
 if(tg){tg.ready();tg.expand();}
+const supportUrl=(new URLSearchParams(location.search)).get('support_url')||'https://t.me/Neyro_VPN_Support';
 
-// ── Конфиг API ──────────────────────────────────────────────────────────────
-// BOT_PUBLIC_URL подставить при деплое, например:
-//   const API_BASE = 'https://your-bot-domain.com';
-// Если Mini App открывается через тот же сервер — оставить пустым (relative URL).
-const API_BASE = 'https://api.neyrosubweb.com';   // <-- замените на публичный URL вашего сервера бота
-
-// URL Поддержки
-const P = new URLSearchParams(location.search);
-const supportUrl = P.get('support_url') || 'https://t.me/NeyroVPN_support';
-
-// ── Глобальное состояние данных ─────────────────────────────────────────────
-let username = '—';
-let expires  = '—';
-let used     = 0;
-let total    = 0;
-let subUrl   = '';
-
-// ── Загрузка данных с бэкенда ───────────────────────────────────────────────
-async function loadUserInfo() {
-  try {
-    const initData = tg ? encodeURIComponent(tg.initData) : '';
-    const url = `${API_BASE}/api/user-info?initData=${initData}`;
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
-
-    if (!data.ok) throw new Error(data.error || 'API error');
-
-    // Заполняем глобальные переменные
-    username = data.username || '—';
-    expires  = data.expires  || '—';
-    used     = data.traffic_used_gb  || 0;
-    total    = data.traffic_total_gb || 0;
-    subUrl   = data.vpn_key || '';
-
-    // Обновляем статус подписки
-    const statusEl = document.getElementById('el-status');
-    if (data.status === 'no_sub') {
-      statusEl.textContent = 'Нет подписки';
-      statusEl.closest('.badge-active').style.background = 'rgba(200,60,60,0.12)';
-      statusEl.closest('.badge-active').style.borderColor = 'rgba(200,60,60,0.3)';
-      statusEl.closest('.badge-active').style.color = '#e05050';
-      document.querySelector('.badge-dot').style.background = '#e05050';
-    } else if (data.status === 'expired') {
-      statusEl.textContent = 'Истекла';
-      statusEl.closest('.badge-active').style.background = 'rgba(200,100,0,0.12)';
-      statusEl.closest('.badge-active').style.borderColor = 'rgba(200,100,0,0.3)';
-      statusEl.closest('.badge-active').style.color = '#e09030';
-      document.querySelector('.badge-dot').style.background = '#e09030';
-    }
-    // else status==='active' — стили по умолчанию зелёные
-
-    // Прогресс-бар трафика
-    const pct = data.traffic_pct || 0;
-    const fillEl = document.getElementById('el-bar');
-    if (fillEl) fillEl.style.width = pct + '%';
-
-    // Перерисовываем UI с реальными данными
-    updateUIStrings();
-
-  } catch (err) {
-    console.warn('loadUserInfo error:', err);
-    // При ошибке — показываем заглушку, чтобы не было пустого экрана
-    updateUIStrings();
-  }
-}
-
-// Локализация текстов
-const LANG_DATA = {
-  ru: {
-    user: "Имя пользователя", status: "Статус", active: "Активна", expires: "Истекает",
-    traffic: "Трафик", used: "Использовано", install: "Установка", copied: "Ссылка скопирована!",
-    from: "из", step1: "Установка приложения", step1_desc: "Выберите подходящую версию для вашего устройства, нажмите на кнопку ниже и установите приложение.",
-    step2: "Добавление подписки", step2_desc: "Нажмите кнопку ниже, чтобы добавить подписку", step2_btn: "Добавить подписку",
-    step3: "Если подписка не добавилась", step3_btn: "Получить ссылку",
-    step4: "Подключение и использование", warn_clash: "Если вы ранее использовали Clash Verge Rev — удалите его перед установкой Koala Clash."
-  },
-  en: {
-    user: "Username", status: "Status", active: "Active", expires: "Expires",
-    traffic: "Traffic", used: "Used", install: "Installation", copied: "Link copied!",
-    from: "of", step1: "Install Application", step1_desc: "Choose the version for your device, click the button below and install the application.",
-    step2: "Add Subscription", step2_desc: "Click the button below to automatically add your subscription.", step2_btn: "Add Subscription",
-    step3: "If sub wasn't added", step3_btn: "Get Link",
-    step4: "Connection & Usage", warn_clash: "If you previously used Clash Verge Rev, please uninstall it before installing Koala Clash."
-  },
-  zh: {
-    user: "用户名", status: "状态", active: "激活", expires: "到期时间",
-    traffic: "流量", used: "已用流量", install: "安装教程", copied: "链接已复制!",
-    from: "共", step1: "安装应用程序", step1_desc: "选择适合您设备的版本，点击下方按钮进行安装。",
-    step2: "添加订阅", step2_desc: "点击下方按钮以自动添加您的订阅。", step2_btn: "添加订阅",
-    step3: "如果未成功添加订阅", step3_btn: "获取链接",
-    step4: "连接与使用", warn_clash: "如果您之前使用过 Clash Verge Rev，请在安装 Koala Clash 之前将其卸载。"
-  },
-  fa: {
-    user: "نام کاربری", status: "وضعیت", active: "فعال", expires: "تاریخ انقضا",
-    traffic: "ترافیک", used: "مصرف شده", install: "آموزش نصب", copied: "لینک کپی شد!",
-    from: "از", step1: "نصب برنامه", step1_desc: "نسخه مناسب دستگاه خود را انتخاب کرده، روی دکمه زیر کلیک و برنامه را نصب کنید.",
-    step2: "افزودن اشتراک", step2_desc: "برای افزودن خودکار اشتراک، روی دکمه زیر کلیک کنید.", step2_btn: "افزودن اشتراک",
-    step3: "اگر اشتراک اضافه نشد", step3_btn: "دریافت لینک",
-    step4: "اتصال و استفاده", warn_clash: "اگر قبلاً از Clash Verge Rev استفاده کرده‌اید، لطفاً قبل از نصب Koala Clash آن را پاک کنید."
-  },
-  fr: {
-    user: "Nom d'utilisateur", status: "Statut", active: "Actif", expires: "Expire le",
-    traffic: "Trafic", used: "Utilisé", install: "Installation", copied: "Lien copié!",
-    from: "sur", step1: "Installer l'application", step1_desc: "Choisissez la version pour votre appareil, cliquez sur le bouton ci-dessous et installez l'application.",
-    step2: "Ajouter l'abonnement", step2_desc: "Cliqueves sur le bouton ci-dessous pour ajouter automatiquement votre abonnement.", step2_btn: "Ajouter l'abonnement",
-    step3: "Si l'abonnement n'a pas été ajouté", step3_btn: "Obtenir le lien",
-    step4: "Connexion & Utilisation", warn_clash: "Si vous utilisiez Clash Verge Rev auparavant, veuillez le désinstaller avant d'installer Koala Clash."
-  }
+// Real SVG icons from source
+const ICONS={
+  happ:`<svg width="20" height="20" viewBox="0 0 50 50" fill="none"><path d="M22.3264 3H12.3611L9.44444 20.1525L21.3542 8.22034L22.3264 3Z" fill="#FAFAFA"/><path d="M10.9028 20.1525L22.8125 8.22034L20.8681 21.1469H28.4028L27.9167 21.6441L20.8681 28.8531H19.4097V30.5932L7.5 42.5254L10.9028 20.1525Z" fill="#FAFAFA"/><path d="M41.0417 8.22034L28.8889 20.1525L31.684 3H41.7708L41.0417 8.22034Z" fill="#FAFAFA"/><path d="M30.3472 20.1525L42.5 8.22034L38.6111 30.3446L26.9444 42.5254L29.0104 28.8531H22.3264L29.6181 21.1469H30.3472V20.1525Z" fill="#FAFAFA"/><path d="M40.0694 30.3446L28.4028 42.5254L27.9167 47H37.8819L40.0694 30.3446Z" fill="#FAFAFA"/><path d="M18.6806 47H8.47222L8.95833 42.5254L20.8681 30.5932L18.6806 47Z" fill="#FAFAFA"/></svg>`,
+  flclashx:`<svg width="20" height="20" viewBox="0 0 50 50" fill="none"><rect x="16.1458" y="47" width="6.66417" height="46.9593" rx="3.33209" transform="rotate(-150 16.1458 47)" fill="#FAFAFA"/><path d="M38.1165 40.751C39.0362 42.3446 38.4902 44.3827 36.8967 45.3027C35.3031 46.2228 33.2652 45.6764 32.345 44.083L25.6887 32.5537L29.5364 25.8896L38.1165 40.751ZM13.4163 4.63477C15.01 3.71464 17.0479 4.26078 17.968 5.85449L24.5334 17.2266L20.6868 23.8906L12.1975 9.18652C11.2775 7.59298 11.8229 5.55504 13.4163 4.63477Z" fill="#FAFAFA"/></svg>`,
+  koala:`<svg width="20" height="20" viewBox="0 0 50 50" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.99239 5.21742C4.0328 5.32232 3.19446 5.43999 3.12928 5.47886C2.94374 5.58955 2.96432 33.4961 3.14997 33.6449C3.2266 33.7062 4.44146 34.002 5.84976 34.3022C7.94234 34.7483 8.60505 34.8481 9.47521 34.8481C10.3607 34.8481 10.5706 34.8154 10.7219 34.6541C10.8859 34.479 10.9066 33.7222 10.9338 26.9143L10.9638 19.3685L11.2759 19.1094C11.6656 18.7859 12.1188 18.7789 12.5285 19.0899C12.702 19.2216 14.319 20.624 16.1219 22.2061C17.9247 23.7883 19.5136 25.1104 19.6527 25.144C19.7919 25.1777 20.3714 25.105 20.9406 24.9825C22.6144 24.6221 23.3346 24.5424 24.9233 24.5421C26.4082 24.5417 27.8618 24.71 29.2219 25.0398C29.6074 25.1333 30.0523 25.1784 30.2107 25.1399C30.369 25.1016 31.1086 24.5336 31.8543 23.8777C33.3462 22.5653 33.6461 22.3017 35.4359 20.7293C36.1082 20.1388 36.6831 19.6313 36.7137 19.6017C37.5681 18.7742 38.0857 18.6551 38.6132 19.1642L38.9383 19.478V34.5138L39.1856 34.6809C39.6343 34.9843 41.2534 34.9022 43.195 34.4775C44.1268 34.2737 45.2896 34.0291 45.779 33.9339C46.2927 33.8341 46.7276 33.687 46.8079 33.5861C47.0172 33.3228 47.0109 5.87708 46.8014 5.6005C46.6822 5.4431 46.2851 5.37063 44.605 5.1996C43.477 5.08482 42.2972 5.00505 41.983 5.02223L41.4121 5.05368L35.4898 10.261C27.3144 17.4495 27.7989 17.0418 27.5372 16.9533C27.4148 16.912 26.1045 16.8746 24.6253 16.8702C22.0674 16.8626 21.9233 16.8513 21.6777 16.6396C21.0693 16.115 17.2912 12.8028 14.5726 10.4108C12.9548 8.98729 10.9055 7.18761 10.0186 6.41134L8.40584 5L7.5715 5.01331C7.11256 5.02072 5.95198 5.11252 4.99239 5.21742Z" fill="#FAFAFA"/><path d="M25.572 37.9556C25.3176 38.3822 24.6815 38.3822 24.427 37.9556L23.4728 36.3558C23.2184 35.9292 23.5364 35.396 24.0453 35.396H25.9537C26.4626 35.396 26.7807 35.9292 26.5262 36.3558L25.572 37.9556Z" fill="#FAFAFA"/><path d="M3 37.3157C3 36.9034 3.3453 36.5691 3.77126 36.5691H14.3485C14.7745 36.5691 15.1198 36.9034 15.1198 37.3157C15.1198 37.728 14.7745 38.0623 14.3485 38.0623H3.77126C3.3453 38.0623 3 37.728 3 37.3157Z" fill="#FAFAFA"/><path d="M3.58851 44.5029C3.44604 44.1144 3.65596 43.6876 4.05738 43.5497L14.0254 40.1251C14.4269 39.9872 14.8678 40.1904 15.0102 40.5789C15.1527 40.9675 14.9428 41.3943 14.5414 41.5322L4.57331 44.9568C4.17189 45.0947 3.73098 44.8915 3.58851 44.5029Z" fill="#FAFAFA"/><path d="M47 37.3157C47 36.9034 46.6547 36.5691 46.2287 36.5691H35.6515C35.2255 36.5691 34.8802 36.9034 34.8802 37.3157C34.8802 37.728 35.2255 38.0623 35.6515 38.0623H46.2287C46.6547 38.0623 47 37.728 47 37.3157Z" fill="#FAFAFA"/><path d="M46.4115 44.5029C46.554 44.1144 46.344 43.6876 45.9426 43.5497L35.9746 40.1251C35.5731 39.9872 35.1322 40.1904 34.9898 40.5789C34.8473 40.9675 35.0572 41.3943 35.4586 41.5322L45.4267 44.9568C45.8281 45.0947 46.269 44.8915 46.4115 44.5029Z" fill="#FAFAFA"/></svg>`,
+  prizrak:`<svg width="20" height="20" viewBox="0 0 50 50" fill="none"><path d="M25 8C18 8 13 13 13 20L13 40L17 37L21 40L25 37L29 40L33 37L37 40L37 20C37 13 32 8 25 8Z" fill="#FAFAFA" opacity="0.9"/><circle cx="20" cy="22" r="3" fill="#1c2230"/><circle cx="30" cy="22" r="3" fill="#1c2230"/></svg>`,
+  stash:`<svg width="20" height="20" viewBox="0 0 50 50" fill="none"><path d="M24.4948 3.02051C33.172 2.52485 37.945 10.8183 37.7565 20.8945C42.3238 22.5003 51.8349 31.9328 47.3727 39.9775C43.0858 47.7061 35.3051 49.1534 24.9977 43.3711C21.2267 46.1366 8.15345 51.0387 2.81116 40.7939C-1.1406 33.2151 4.13135 24.7049 11.9244 20.8945C11.673 16.4661 13.4331 3.65239 24.4948 3.02051ZM12.6158 27.5371C10.3533 29.0455 6.77107 32.9426 8.21643 37.2793C9.63059 41.5219 15.6954 41.4901 19.4664 39.416C15.6328 35.5193 13.6717 31.2075 12.6158 27.5371ZM37.0651 27.5371C36.2606 33.1181 32.2045 37.7818 30.277 39.416C33.9223 41.2387 39.7858 41.396 41.653 37.2793C43.3898 33.4495 38.1545 28.1028 37.0651 27.5371ZM31.4088 24.584C29.2091 23.725 23.5022 22.5226 18.2731 24.584C18.5456 26.8888 20.0326 32.3148 24.8717 36.1484C27.239 34.263 31.1572 29.2349 31.4088 24.584ZM24.8717 9.43652C21.1637 9.43663 19.0896 13.208 18.0211 18.1729C21.0379 17.293 25.6894 16.7901 31.5973 18.1729C31.5973 15.2819 28.8313 9.43657 24.8717 9.43652Z" fill="#FAFAFA"/></svg>`,
+  shadowrocket:`<svg width="20" height="20" viewBox="0 0 50 50" fill="none"><path d="M21.2394 36.832L16.5386 39.568C16.5386 39.568 13.7182 36.832 11.8379 33.184C9.95756 29.536 16.5386 23.152 16.5386 23.152M21.2394 36.832H28.7606M21.2394 36.832C21.2394 36.832 15.5985 24.064 17.4788 16.768C19.3591 9.472 25 4 25 4C25 4 30.6409 9.472 32.5212 16.768C34.4015 24.064 28.7606 36.832 28.7606 36.832M28.7606 36.832L33.4614 39.568C33.4614 39.568 36.2818 36.832 38.1621 33.184C40.0424 29.536 33.4614 23.152 33.4614 23.152M25 46L26.8803 40.528H23.1197L25 46ZM25.9402 17.68C26.4594 18.1837 26.4594 19.0003 25.9402 19.504C25.4209 20.0077 24.5791 20.0077 24.0598 19.504C23.5406 19.0003 23.5406 18.1837 24.0598 17.68C24.5791 17.1763 25.4209 17.1763 25.9402 17.68Z" stroke="#FAFAFA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  clashmeta:`<svg width="20" height="20" viewBox="0 0 50 50" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.99239 5.21742C4.0328 5.32232 3.19446 5.43999 3.12928 5.47886C2.94374 5.58955 2.96432 33.4961 3.14997 33.6449C3.2266 33.7062 4.44146 34.002 5.84976 34.3022C7.94234 34.7483 8.60505 34.8481 9.47521 34.8481C10.3607 34.8481 10.5706 34.8154 10.7219 34.6541C10.8859 34.479 10.9066 33.7222 10.9338 26.9143L10.9638 19.3685L11.2759 19.1094C11.6656 18.7859 12.1188 18.7789 12.5285 19.0899C12.702 19.2216 14.319 20.624 16.1219 22.2061C17.9247 23.7883 19.5136 25.1104 19.6527 25.144C19.7919 25.1777 20.3714 25.105 20.9406 24.9825C22.6144 24.6221 23.3346 24.5424 24.9233 24.5421C26.4082 24.5417 27.8618 24.71 29.2219 25.0398C29.6074 25.1333 30.0523 25.1784 30.2107 25.1399C30.369 25.1016 31.1086 24.5336 31.8543 23.8777C33.3462 22.5653 33.6461 22.3017 35.4359 20.7293C36.1082 20.1388 36.6831 19.6313 36.7137 19.6017C37.5681 18.7742 38.0857 18.6551 38.6132 19.1642L38.9383 19.478V34.5138L39.1856 34.6809C39.6343 34.9843 41.2534 34.9022 43.195 34.4775C44.1268 34.2737 45.2896 34.0291 45.779 33.9339C46.2927 33.8341 46.7276 33.687 46.8079 33.5861C47.0172 33.3228 47.0109 5.87708 46.8014 5.6005C46.6822 5.4431 46.2851 5.37063 44.605 5.1996C43.477 5.08482 42.2972 5.00505 41.983 5.02223L41.4121 5.05368L35.4898 10.261C27.3144 17.4495 27.7989 17.0418 27.5372 16.9533C27.4148 16.912 26.1045 16.8746 24.6253 16.8702C22.0674 16.8626 21.9233 16.8513 21.6777 16.6396C21.0693 16.115 17.2912 12.8028 14.5726 10.4108C12.9548 8.98729 10.9055 7.18761 10.0186 6.41134L8.40584 5L7.5715 5.01331C7.11256 5.02072 5.95198 5.11252 4.99239 5.21742Z" fill="#FAFAFA"/><path d="M25.572 37.9556C25.3176 38.3822 24.6815 38.3822 24.427 37.9556L23.4728 36.3558C23.2184 35.9292 23.5364 35.396 24.0453 35.396H25.9537C26.4626 35.396 26.7807 35.9292 26.5262 36.3558L25.572 37.9556Z" fill="#FAFAFA"/><path d="M3 37.3157C3 36.9034 3.3453 36.5691 3.77126 36.5691H14.3485C14.7745 36.5691 15.1198 36.9034 15.1198 37.3157C15.1198 37.728 14.7745 38.0623 14.3485 38.0623H3.77126C3.3453 38.0623 3 37.728 3 37.3157Z" fill="#FAFAFA"/><path d="M46.4115 44.5029C46.554 44.1144 46.344 43.6876 45.9426 43.5497L35.9746 40.1251C35.5731 39.9872 35.1322 40.1904 34.9898 40.5789C34.8473 40.9675 35.0572 41.3943 35.4586 41.5322L45.4267 44.9568C45.8281 45.0947 46.269 44.8915 46.4115 44.5029Z" fill="#FAFAFA"/><path d="M47 37.3157C47 36.9034 46.6547 36.5691 46.2287 36.5691H35.6515C35.2255 36.5691 34.8802 36.9034 34.8802 37.3157C34.8802 37.728 35.2255 38.0623 35.6515 38.0623H46.2287C46.6547 38.0623 47 37.728 47 37.3157Z" fill="#FAFAFA"/><path d="M3.58851 44.5029C3.44604 44.1144 3.65596 43.6876 4.05738 43.5497L14.0254 40.1251C14.4269 39.9872 14.8678 40.1904 15.0102 40.5789C15.1527 40.9675 14.9428 41.3943 14.5414 41.5322L4.57331 44.9568C4.17189 45.0947 3.73098 44.8915 3.58851 44.5029Z" fill="#FAFAFA"/></svg>`,
+  v2rayng:`<svg width="20" height="20" viewBox="0 0 50 50" fill="none"><path d="M25 46L24.2602 47.0076C24.7027 47.3325 25.3054 47.3306 25.7459 47.0031L25 46ZM6.14773 32.1591H4.89773C4.89773 32.557 5.0872 32.9312 5.40797 33.1667L6.14773 32.1591ZM43.6136 32.1591L44.3595 33.1622C44.6767 32.9263 44.8636 32.5543 44.8636 32.1591H43.6136ZM6.14773 19.9886L5.42485 18.9689C5.09421 19.2032 4.89773 19.5834 4.89773 19.9886H6.14773ZM25 6.625L25.729 5.6096L25.0046 5.08952L24.2771 5.60522L25 6.625ZM43.6136 19.9886H44.8636C44.8636 19.586 44.6697 19.208 44.3426 18.9732L43.6136 19.9886ZM25 46L25.7398 44.9924L6.88748 31.1515L6.14773 32.1591L5.40797 33.1667L24.2602 47.0076L25 46ZM43.6136 32.1591L42.8678 31.156L24.2541 44.9969L25 46L25.7459 47.0031L44.3595 33.1622L43.6136 32.1591ZM25 33.8295L25.7398 32.8219L6.88748 18.981L6.14773 19.9886L5.40797 20.9962L24.2602 34.8371L25 33.8295ZM6.14773 19.9886L6.87061 21.0084L25.7229 7.64478L25 6.625L24.2771 5.60522L5.42485 18.9689L6.14773 19.9886ZM25 6.625L24.271 7.6404L42.8846 21.004L43.6136 19.9886L44.3426 18.9732L25.729 5.6096L25 6.625ZM43.6136 19.9886L42.8678 18.9856L24.2541 32.8265L25 33.8295L25.7459 34.8326L44.3595 20.9917L43.6136 19.9886ZM43.6136 32.1591H44.8636V19.9886H43.6136H42.3636V32.1591H43.6136ZM25 33.8295H23.75V46H25H26.25V33.8295H25ZM6.14773 32.1591H7.39773V19.9886H6.14773H4.89773V32.1591H6.14773Z" fill="#FAFAFA"/></svg>`,
+  vpn4tv:`<svg width="20" height="20" viewBox="0 0 50 50" fill="none"><rect x="5" y="12" width="40" height="26" rx="3" stroke="#FAFAFA" stroke-width="2.5"/><line x1="15" y1="38" x2="35" y2="38" stroke="#FAFAFA" stroke-width="2.5" stroke-linecap="round"/><line x1="25" y1="38" x2="25" y2="44" stroke="#FAFAFA" stroke-width="2.5" stroke-linecap="round"/><line x1="18" y1="44" x2="32" y2="44" stroke="#FAFAFA" stroke-width="2.5" stroke-linecap="round"/><circle cx="25" cy="25" r="7" stroke="#FAFAFA" stroke-width="2"/></svg>`,
 };
 
-let currentLang = 'ru';
-let curOs='windows', curApp=null;
-
-// Иконки SVG для шагов
-const svgDl = `<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
-const svgSub = `<svg viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="3" x2="12" y2="21"/><path d="M20 9a8 8 0 00-16 0"/></svg>`;
-const svgSet = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M21 12h-2M5 12H3M12 21v-2M12 5V3"/></svg>`;
-const svgOk  = `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`;
-const svgExt = `<svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
-const svgCopy = `<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
-
-// Функция открытия ссылки поддержки
-function openSupport() {
-  if(tg) tg.openTelegramLink(supportUrl);
-  else window.open(supportUrl, '_blank');
-}
-
-function toggleLangDropdown(e) {
-  e.stopPropagation();
-  document.getElementById('lang-dropdown').classList.toggle('show');
-}
-
-function changeLang(lang) {
-  currentLang = lang;
-  document.getElementById('lang-dropdown').classList.remove('show');
-
-  const textMap = { en: "English", ru: "Русский", zh: "中文", fa: "فارسی", fr: "Français" };
-  document.getElementById('current-lang-text').textContent = textMap[lang];
-
-  updateUIStrings();
-  renderSteps();
-}
-
-function updateUIStrings() {
-  const l = LANG_DATA[currentLang];
-  document.getElementById('lbl-user').textContent = l.user;
-  document.getElementById('lbl-status').textContent = l.status;
-  document.getElementById('el-status').textContent = l.active;
-  document.getElementById('lbl-expires').textContent = l.expires;
-  document.getElementById('lbl-traffic').textContent = l.traffic;
-  document.getElementById('lbl-used').textContent = l.used;
-  document.getElementById('lbl-install').textContent = l.install;
-
-  document.getElementById('el-user').textContent = username;
-  document.getElementById('el-expires').textContent = expires;
-  document.getElementById('el-traffic').textContent = used.toFixed(2)+' / '+total.toFixed(2)+' GiB';
-  document.getElementById('el-bar-label').textContent = used.toFixed(2)+' ' + l.from + ' '+total.toFixed(2)+' GiB';
-}
-
-// Конфиг ОС
-const OS = {
-  windows:{
-    apps:[
-      {id:'flclashx', name:'FlClashX', icon:'X', dot:true},
-      {id:'koala',    name:'Koala Clash', icon:'🐨', dot:true},
-      {id:'prizrak',  name:'Prizrak-Box', icon:'👻'},
-      {id:'happ',     name:'Happ', icon:'H'},
-    ],
-    steps(app){
-      const l = LANG_DATA[currentLang];
-      const dlBtns = {
-        flclashx: [['Windows (Установщик)','https://github.com/chen08209/FlClash/releases']],
-        koala:    [['Windows (Установщик)','https://github.com/KoalaSocks/KoalaClash/releases']],
-        prizrak:  [['Скачать','https://github.com/hiddify/hiddify-app/releases']],
-        happ:     [['Скачать','https://happtun.com']],
-      }[app]||[];
-      const warn = (app==='koala')?`<div class="warn-box"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>${l.warn_clash}</div>`:'';
-      return `
-        <div class="step">
-          <div class="step-left"><div class="step-icon">${svgDl}</div><div class="step-line"></div></div>
-          <div class="step-body">
-            <div class="step-title">${l.step1}</div>
-            <div class="step-desc">${l.step1_desc}</div>
-            <div class="btn-row">${dlBtns.map(([t,u])=>`<a class="btn-teal" href="${u}" target="_blank">${svgExt}${t}</a>`).join('')}</div>
-            ${warn}
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-left"><div class="step-icon">${svgSub}</div><div class="step-line"></div></div>
-          <div class="step-body">
-            <div class="step-title">${l.step2}</div>
-            <div class="step-desc">${l.step2_desc}</div>
-            <div class="btn-row"><button class="btn-teal" onclick="addSub()">${svgSub}&nbsp;${l.step2_btn}</button></div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-left"><div class="step-icon">${svgSet}</div><div class="step-line"></div></div>
-          <div class="step-body">
-            <div class="step-title">${l.step3}</div>
-            <div class="btn-row"><button class="btn-outline" onclick="copySubLink()">${svgCopy}&nbsp;${l.step3_btn}</button></div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-left"><div class="step-icon done">${svgOk}</div></div>
-          <div class="step-body">
-            <div class="step-title">${l.step4}</div>
-          </div>
-        </div>`;
-    }
-  },
-  android:{
-    apps:[
-      {id:'happ',   name:'Happ',       icon:'H', dot:true},
-      {id:'flclash',name:'FlClashX',   icon:'X', dot:true},
-    ],
-    steps(app){
-      const l = LANG_DATA[currentLang];
-      return `
-        <div class="step">
-          <div class="step-left"><div class="step-icon">${svgDl}</div><div class="step-line"></div></div>
-          <div class="step-body">
-            <div class="step-title">${l.step1}</div>
-            <div class="step-desc">${l.step1_desc}</div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-left"><div class="step-icon">${svgSub}</div><div class="step-line"></div></div>
-          <div class="step-body">
-            <div class="step-title">${l.step2}</div>
-            <div class="btn-row"><button class="btn-teal" onclick="addSub()">${svgSub}&nbsp;${l.step2_btn}</button></div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-left"><div class="step-icon done">${svgOk}</div></div>
-          <div class="step-body">
-            <div class="step-title">${l.step4}</div>
-          </div>
-        </div>`;
-    }
-  },
-  ios:{
-    apps:[
-      {id:'happ',       name:'Happ',        icon:'H', dot:true},
-      {id:'stash',      name:'Stash',       icon:'S'},
-    ],
-    steps(app){
-      const l = LANG_DATA[currentLang];
-      return `
-        <div class="step">
-          <div class="step-left"><div class="step-icon">${svgDl}</div><div class="step-line"></div></div>
-          <div class="step-body">
-            <div class="step-title">${l.step1}</div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-left"><div class="step-icon">${svgSub}</div><div class="step-line"></div></div>
-          <div class="step-body">
-            <div class="step-title">${l.step2}</div>
-            <div class="btn-row"><button class="btn-teal" onclick="addSub()">${svgSub}&nbsp;${l.step2_btn}</button></div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-left"><div class="step-icon done">${svgOk}</div></div>
-          <div class="step-body">
-            <div class="step-title">${l.step4}</div>
-          </div>
-        </div>`;
-    }
-  },
-  macos:{
-    apps:[{id:'happ', name:'Happ', icon:'H', dot:true}],
-    steps(app){
-      const l = LANG_DATA[currentLang];
-      return `<div class="step"><div class="step-body"><div class="step-title">${l.step1}</div></div></div>`;
-    }
-  },
-  linux:{
-    apps:[{id:'flclash', name:'FlClashX', icon:'X', dot:true}],
-    steps(app){
-      const l = LANG_DATA[currentLang];
-      return `<div class="step"><div class="step-body"><div class="step-title">${l.step1}</div></div></div>`;
-    }
-  }
+const L={
+  ru:{user:"Имя пользователя",status:"Статус",active:"Активна",expired:"Истекла",nosub:"Нет подписки",expires:"Истекает",traffic:"Трафик",used:"Использовано",install:"Установка",copied:"Ссылка скопирована!",from:"из",add_sub:"Добавить подписку",get_link:"Получить ссылку",step_install:"Установка приложения",step_add:"Добавление подписки",step_add_desc:"Нажмите кнопку ниже — приложение откроется и подписка добавится автоматически.",step_manual:"Если подписка не добавилась",step_connect:"Подключение и использование",warn_koala:"Если вы ранее использовали Clash Verge Rev — удалите его перед установкой Koala Clash."},
+  en:{user:"Username",status:"Status",active:"Active",expired:"Expired",nosub:"No sub",expires:"Expires",traffic:"Traffic",used:"Used",install:"Installation",copied:"Copied!",from:"of",add_sub:"Add subscription",get_link:"Get link",step_install:"Install app",step_add:"Add subscription",step_add_desc:"Click below — app opens and subscription adds automatically.",step_manual:"If not added",step_connect:"Connect & Use",warn_koala:"Uninstall Clash Verge Rev before installing Koala Clash."},
+  zh:{user:"用户名",status:"状态",active:"激活",expired:"过期",nosub:"无订阅",expires:"到期",traffic:"流量",used:"已用",install:"安装",copied:"已复制!",from:"共",add_sub:"添加订阅",get_link:"获取链接",step_install:"安装应用",step_add:"添加订阅",step_add_desc:"点击下方按钮自动添加订阅。",step_manual:"未添加时",step_connect:"连接使用",warn_koala:"安装前请卸载 Clash Verge Rev。"},
+  fa:{user:"نام کاربری",status:"وضعیت",active:"فعال",expired:"منقضی",nosub:"بدون اشتراک",expires:"انقضا",traffic:"ترافیک",used:"مصرف",install:"نصب",copied:"کپی شد!",from:"از",add_sub:"افزودن اشتراک",get_link:"دریافت لینک",step_install:"نصب برنامه",step_add:"افزودن اشتراک",step_add_desc:"روی دکمه کلیک کنید — اشتراک خودکار اضافه می‌شود.",step_manual:"اگر اضافه نشد",step_connect:"اتصال",warn_koala:"قبل از نصب Koala Clash، Clash Verge Rev را حذف کنید."},
+  fr:{user:"Utilisateur",status:"Statut",active:"Actif",expired:"Expiré",nosub:"Sans abonnement",expires:"Expire",traffic:"Trafic",used:"Utilisé",install:"Installation",copied:"Copié!",from:"sur",add_sub:"Ajouter",get_link:"Obtenir le lien",step_install:"Installer l'app",step_add:"Ajouter l'abonnement",step_add_desc:"Cliquez — l'app s'ouvre et l'abonnement s'ajoute.",step_manual:"Si non ajouté",step_connect:"Connexion",warn_koala:"Désinstallez Clash Verge Rev avant Koala Clash."},
 };
 
-window.addEventListener('click', () => {
-  document.getElementById('lang-dropdown').classList.remove('show');
-});
+let lang='ru',curOs='windows',curApp=null,subUrl='',userInfo=null;
 
-function renderOs(os){
-  curOs=os; curApp=null;
-  const cfg=OS[os];
-  const tabs=document.getElementById('app-tabs');
-  tabs.innerHTML=cfg.apps.map((a,i)=>`
-    <div class="app-tab${i===0?' active':''}" onclick="selectApp('${a.id}',this)">
-      ${a.dot?`<span class="app-tab-dot"></span>`:''}
-      <span style="font-size:16px">${a.icon}</span>
-      <span>${a.name}</span>
-    </div>`).join('');
-  curApp=cfg.apps[0].id;
-  renderSteps();
+const SVG_DL=`<svg viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/><path d="M7 11l5 5 5-5"/><path d="M12 4v12"/></svg>`;
+const SVG_SUB=`<svg viewBox="0 0 24 24"><path d="M19 18a3.5 3.5 0 000-7h-1a5 4.5 0 00-11-2 4.6 4.4 0 00-2.1 8.4"/><path d="M12 13v9"/><path d="M9 19l3 3 3-3"/></svg>`;
+const SVG_OK=`<svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>`;
+const SVG_EXT=`<svg viewBox="0 0 24 24"><path d="M12 6h-6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-6"/><path d="M11 13l9-9"/><path d="M15 4h5v5"/></svg>`;
+const SVG_COPY=`<svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
+const SVG_PLUS=`<svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>`;
+const SVG_WARN=`<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+
+const OS_CFG={
+  windows:{label:'Windows',icon:'⊞',apps:[{id:'happ',name:'Happ',dot:true},{id:'flclashx',name:'FlClashX',dot:true},{id:'koala',name:'Koala Clash',dot:true},{id:'prizrak',name:'Prizrak-Box'}],steps(app,l){
+    const lnk={happ:[['Windows (Установщик)','https://github.com/Happ-proxy/happ-desktop/releases/latest/download/setup-Happ.x64.exe']],flclashx:[['Windows (Установщик)','https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-windows-amd64-setup.exe']],koala:[['Windows (Установщик)','https://github.com/coolcoala/clash-verge-rev-lite/releases/latest/download/Koala.Clash_x64-setup.exe']],prizrak:[['Windows (.msi)','https://github.com/legiz-ru/Prizrak-Box/releases/latest/download/windows-amd64.msi']]};
+    const con={happ:'Откройте Happ, выберите сервер и нажмите кнопку подключения.',flclashx:'Выберите профиль в разделе Профили. В Панели управления нажмите включить и активируйте TUN.',koala:'Выберите профиль и включите VPN.',prizrak:'Выберите профиль и нажмите подключиться.'};
+    const man={happ:'Нажмите получить ссылку. В Happ: Профили → Импорт → вставьте.',flclashx:'Нажмите получить ссылку. В FlClashX: Профили → + → URL → вставьте → Отправить.',koala:'Нажмите получить ссылку. В Koala Clash: Профили → Импорт → вставьте URL.',prizrak:'Нажмите получить ссылку и добавьте: Профили → Добавить.'};
+    const w=app==='koala'?`<div class="warn-box">${SVG_WARN}${l.warn_koala}</div>`:'';
+    return bs(lnk[app]||[],con[app]||'',man[app]||'',w,l);}},
+  android:{label:'Android',icon:'⊕',apps:[{id:'happ',name:'Happ',dot:true},{id:'flclashx',name:'FlClashX',dot:true},{id:'clashmeta',name:'Clash Meta'},{id:'v2rayng',name:'v2rayNG'}],steps(app,l){
+    const lnk={happ:[['Google Play','https://play.google.com/store/apps/details?id=com.happproxy'],['Скачать APK','https://github.com/Happ-proxy/happ-android/releases/latest/download/Happ.apk']],flclashx:[['Скачать APK','https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-android-universal.apk']],clashmeta:[['Скачать APK','https://github.com/MetaCubeX/ClashMetaForAndroid/releases/download/v2.11.20/cmfa-2.11.20-meta-universal-release.apk']],v2rayng:[['Скачать APK','https://github.com/2dust/v2rayNG/releases/download/1.10.31/v2rayNG_1.10.31_universal.apk']]};
+    const con={happ:'Откройте Happ и нажмите кнопку подключения.',flclashx:'Выберите профиль и нажмите включить.',clashmeta:'Перейдите в Профили, выберите профиль, затем на главной нажмите Остановлен.',v2rayng:'Нажмите три точки → Обновить подписку. Выберите сервер → Включить.'};
+    const man={happ:'Нажмите получить ссылку. В Happ: Профили → Импорт → вставьте.',flclashx:'Нажмите получить ссылку. В FlClashX: Профили → + → URL → вставьте.',clashmeta:'Нажмите получить ссылку. Создайте профиль, вставьте URL, укажите период 720 мин → Сохранить.',v2rayng:'Нажмите получить ссылку. В v2rayNG: Добавить профиль по URL → вставьте.'};
+    return bs(lnk[app]||[],con[app]||'',man[app]||'','',l);}},
+  ios:{label:'iOS',icon:'⌘',apps:[{id:'happ',name:'Happ',dot:true},{id:'stash',name:'Stash'},{id:'shadowrocket',name:'Shadowrocket'}],steps(app,l){
+    const lnk={happ:[['App Store (RU)','https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973'],['App Store (Global)','https://apps.apple.com/us/app/happ-proxy-utility/id6504287215']],stash:[['App Store','https://apps.apple.com/us/app/stash-rule-based-proxy/id1596063349']],shadowrocket:[['App Store','https://apps.apple.com/ru/app/shadowrocket/id932747118']]};
+    const con={happ:'Откройте Happ и нажмите большую кнопку подключения.',stash:'Нажмите Запуск. Разрешите VPN-конфигурацию. Перейдите в Политика и выберите страну.',shadowrocket:'В главном разделе нажмите большую кнопку включения. Выберите сервер в списке серверов.'};
+    const man={happ:'Нажмите получить ссылку. В Happ: Профили → Импорт → вставьте.',stash:'Нажмите получить ссылку. В Stash: Профили → + → URL → вставьте.',shadowrocket:'Нажмите получить ссылку. В Shadowrocket: + → Type: Subscribe → вставьте URL.'};
+    return bs(lnk[app]||[],con[app]||'',man[app]||'','',l);}},
+  macos:{label:'macOS',icon:'⌘',apps:[{id:'happ',name:'Happ',dot:true},{id:'flclashx',name:'FlClashX',dot:true},{id:'koala',name:'Koala Clash'},{id:'prizrak',name:'Prizrak-Box'}],steps(app,l){
+    const lnk={happ:[['App Store (RU)','https://apps.apple.com/ru/app/happ-proxy-utility-plus/id6746188973'],['App Store (Global)','https://apps.apple.com/us/app/happ-proxy-utility/id6504287215']],flclashx:[['macOS (Apple Silicon)','https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-macos-arm64.dmg'],['macOS (Intel)','https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-macos-amd64.dmg']],koala:[['macOS (.dmg)','https://github.com/coolcoala/clash-verge-rev-lite/releases/latest/download/Koala.Clash_aarch64.dmg']],prizrak:[['Linux/macOS (.deb)','https://github.com/legiz-ru/Prizrak-Box/releases/latest/download/linux-arm64.deb']]};
+    const con={happ:'Откройте Happ, выберите сервер и нажмите подключиться.',flclashx:'Выберите профиль. Нажмите включить и активируйте TUN. В разделе Прокси выберите сервер.',koala:'Выберите профиль и включите VPN.',prizrak:'Выберите профиль и нажмите подключиться.'};
+    const man={happ:'Нажмите получить ссылку. В Happ: Профили → Импорт → вставьте.',flclashx:'Нажмите получить ссылку. В FlClashX: Профили → + → URL → вставьте → Отправить.',koala:'Нажмите получить ссылку. В Koala Clash: Профили → Импорт → вставьте.',prizrak:'Нажмите получить ссылку и добавьте через Профили.'};
+    const w=app==='koala'?`<div class="warn-box">${SVG_WARN}${l.warn_koala}</div>`:'';
+    return bs(lnk[app]||[],con[app]||'',man[app]||'',w,l);}},
+  linux:{label:'Linux',icon:'⊛',apps:[{id:'flclashx',name:'FlClashX',dot:true},{id:'prizrak',name:'Prizrak-Box'},{id:'koala',name:'Koala Clash'}],steps(app,l){
+    const lnk={flclashx:[['amd64 (.deb)','https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-linux-amd64.deb'],['amd64 (AppImage)','https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-linux-amd64.AppImage'],['amd64 (.rpm)','https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-linux-amd64.rpm'],['arm64 (.deb)','https://github.com/pluralplay/FlClashX/releases/latest/download/FlClashX-linux-arm64.deb']],prizrak:[['amd64 (.deb)','https://github.com/legiz-ru/Prizrak-Box/releases/latest/download/linux-amd64.deb'],['amd64 (.rpm)','https://github.com/legiz-ru/Prizrak-Box/releases/latest/download/linux-amd64.rpm'],['arm64 (.deb)','https://github.com/legiz-ru/Prizrak-Box/releases/latest/download/linux-arm64.deb'],['arm64 (.rpm)','https://github.com/legiz-ru/Prizrak-Box/releases/latest/download/linux-arm64.rpm']],koala:[['Linux (.dmg)','https://github.com/coolcoala/clash-verge-rev-lite/releases/latest/download/Koala.Clash_aarch64.dmg']]};
+    const con={flclashx:'Выберите профиль. Нажмите включить в правом нижнем углу и активируйте TUN.',prizrak:'Выберите профиль и нажмите подключиться.',koala:'Выберите профиль и включите VPN.'};
+    const man={flclashx:'Нажмите получить ссылку. В FlClashX: Профили → + → URL → вставьте → Отправить.',prizrak:'Нажмите получить ссылку и добавьте через Профили → Добавить.',koala:'Нажмите получить ссылку. В Koala Clash: Профили → Импорт → вставьте.'};
+    return bs(lnk[app]||[],con[app]||'',man[app]||'','',l);}},
+  androidtv:{label:'Android TV',icon:'📺',apps:[{id:'happ',name:'Happ',dot:true},{id:'vpn4tv',name:'vpn4tv'}],steps(app,l){
+    const lnk={happ:[['Google Play','https://play.google.com/store/apps/details?id=com.happproxy'],['Скачать APK','https://github.com/Happ-proxy/happ-android/releases/latest/download/Happ.apk']],vpn4tv:[['Google Play','https://play.google.com/store/apps/details?id=com.vpn4tv.hiddify']]};
+    const con={happ:'Откройте Happ на телевизоре и нажмите подключиться.',vpn4tv:'Откройте vpn4tv и подключитесь к серверу.'};
+    const man={happ:'Откройте страницу подписки на телевизоре и добавьте подписку.',vpn4tv:'Нажмите получить ссылку и добавьте в vpn4tv через Профили.'};
+    return bs(lnk[app]||[],con[app]||'',man[app]||'','',l);}},
+  appletv:{label:'Apple TV',icon:'🍎',apps:[{id:'happ',name:'Happ',dot:true},{id:'shadowrocket',name:'Shadowrocket'},{id:'stash',name:'Stash'}],steps(app,l){
+    const lnk={happ:[['App Store','https://apps.apple.com/us/app/happ-proxy-utility-for-tv/id6748297274']],shadowrocket:[['App Store','https://apps.apple.com/ru/app/shadowrocket/id932747118']],stash:[['App Store','https://apps.apple.com/us/app/stash-rule-based-proxy/id1596063349']]};
+    const con={happ:'Откройте Happ на Apple TV и нажмите подключиться.',shadowrocket:'Нажмите кнопку включения и выберите сервер.',stash:'Нажмите Запуск. Разрешите VPN-конфигурацию. Перейдите в Политика и выберите страну.'};
+    const man={happ:'Откройте страницу подписки на Apple TV и добавьте.',shadowrocket:'Нажмите получить ссылку. В Shadowrocket: + → Subscribe → вставьте.',stash:'Нажмите получить ссылку. В Stash: Профили → + → URL → вставьте.'};
+    return bs(lnk[app]||[],con[app]||'',man[app]||'','',l);}},
+};
+
+function bs(lnk,con,man,warn,l){
+  const btns=lnk.map(([t,u])=>`<a class="btn-teal" href="${u}" target="_blank">${SVG_EXT}${t}</a>`).join('');
+  return `
+    <div class="step"><div class="step-left"><div class="s-icon s-dl">${SVG_DL}</div><div class="step-line"></div></div><div class="step-body"><div class="step-title">${l.step_install}</div><div class="btn-row">${btns}</div>${warn}</div></div>
+    <div class="step"><div class="step-left"><div class="s-icon s-add">${SVG_SUB}</div><div class="step-line"></div></div><div class="step-body"><div class="step-title">${l.step_add}</div><div class="step-desc">${l.step_add_desc}</div><div class="btn-row"><button class="btn-teal" onclick="addSub()">${SVG_PLUS}&nbsp;${l.add_sub}</button></div></div></div>
+    <div class="step"><div class="step-left"><div class="s-icon s-warn">${SVG_DL}</div><div class="step-line"></div></div><div class="step-body"><div class="step-title">${l.step_manual}</div><div class="step-desc">${man}</div><div class="btn-row"><button class="btn-ghost" onclick="copySubLink()">${SVG_COPY}&nbsp;${l.get_link}</button></div></div></div>
+    <div class="step"><div class="step-left"><div class="s-icon s-ok">${SVG_OK}</div></div><div class="step-body"><div class="step-title">${l.step_connect}</div><div class="step-desc">${con}</div></div></div>`;
 }
 
-function selectApp(id, el){
-  document.querySelectorAll('.app-tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  curApp=id;
-  renderSteps();
+function openSupport(){if(tg)tg.openTelegramLink(supportUrl);else window.open(supportUrl,'_blank');}
+function addSub(){const link=subUrl||location.href;const cl='clash://install-config?url='+encodeURIComponent(link);if(tg)tg.openLink(cl);else location.href=cl;}
+function copySubLink(){const link=subUrl||location.href;if(navigator.clipboard){navigator.clipboard.writeText(link).then(()=>toast(L[lang].copied));}else{const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast(L[lang].copied);}}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+function render(){
+  const l=L[lang];const d=userInfo;const ok=d&&d.ok;
+  let badge,exp,traf,used_s,pct=0;
+  if(ok){
+    if(d.status==='active')badge=`<span class="badge badge-active"><span class="badge-dot"></span>${l.active}</span>`;
+    else if(d.status==='expired')badge=`<span class="badge badge-expired"><span class="badge-dot"></span>${l.expired}</span>`;
+    else badge=`<span class="badge badge-nosub"><span class="badge-dot"></span>${l.nosub}</span>`;
+    if(d.expires_ts){const dt=new Date(d.expires_ts);exp=dt.toLocaleDateString(lang==='ru'?'ru-RU':'en-US',{day:'numeric',month:'long',year:'numeric'});}else exp='—';
+    const u=(d.traffic_used_gb||0).toFixed(2),tot=(d.traffic_total_gb||0).toFixed(2);
+    traf=`${u} / ${tot} GiB`;
+    if(d.traffic_total_gb>0)pct=Math.min(100,Math.round(d.traffic_used_gb/d.traffic_total_gb*100));
+    used_s=`${u} ${l.from} ${tot} GiB`;subUrl=d.vpn_key||'';
+  }else{badge=`<span class="badge badge-nosub"><span class="badge-dot"></span>—</span>`;exp='—';traf='0.00 / 0.00 GiB';used_s=`0.00 ${l.from} 0.00 GiB`;}
+  const uname=ok?d.username:'—';
+  const osOpts=Object.entries(OS_CFG).map(([k,v])=>`<option value="${k}"${k===curOs?' selected':''}>${v.icon} ${v.label}</option>`).join('');
+  const cfg=OS_CFG[curOs];
+  const active=curApp||cfg.apps[0].id;
+  const tabs=cfg.apps.map(a=>{
+    const icon=ICONS[a.id]||`<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#FAFAFA" stroke-width="1.5"/></svg>`;
+    return `<div class="app-tab${a.id===active?' active':''}" onclick="selApp('${a.id}',this)">${a.dot?`<span class="tab-dot"></span>`:''}<span class="tab-name">${a.name}</span><span class="tab-icon-wrap">${icon}</span></div>`;
+  }).join('');
+  const steps=cfg.steps(active,l);
+  const lmap={en:'🇺🇸 English',ru:'🇷🇺 Русский',zh:'🇨🇳 中文',fa:'🇮🇷 فارسی',fr:'🇫🇷 Français'};
+  const lopts=Object.entries(lmap).map(([k,v])=>`<div class="lang-opt" onclick="setLang('${k}')">${v}</div>`).join('');
+
+  document.getElementById('app').innerHTML=`
+    <div class="cards-section"><div class="cards-grid">
+      <div class="stat-card"><div class="stat-icon ic-blue"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="stat-label">${l.user}</div><div class="stat-val" style="font-size:11.5px">${uname}</div></div></div>
+      <div class="stat-card"><div class="stat-icon ic-green"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div><div class="stat-label">${l.status}</div><div class="stat-val">${badge}</div></div></div>
+      <div class="stat-card"><div class="stat-icon ic-orange"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div><div class="stat-label">${l.expires}</div><div class="stat-val">${exp}</div></div></div>
+      <div class="stat-card"><div class="stat-icon ic-teal"><svg viewBox="0 0 24 24"><polyline points="7 16 12 21 17 16"/><polyline points="7 8 12 3 17 8"/><line x1="12" y1="21" x2="12" y2="3"/></svg></div><div><div class="stat-label">${l.traffic}</div><div class="stat-val">${traf}</div></div></div>
+    </div></div>
+    <div class="traffic-section"><div class="traffic-top"><span class="traf-label">${l.used}</span><span class="traf-pct">${pct}%</span></div><div class="bar-bg"><div class="bar-fg" id="bar" style="width:0%"></div></div><div class="traf-sub">${used_s}</div></div>
+    <div class="install-section">
+      <div class="install-head"><span class="install-title">${l.install}</span><select class="os-select" onchange="changeOs(this.value)">${osOpts}</select></div>
+      <div class="tabs-scroll"><div class="tabs-row">${tabs}</div></div>
+      <div class="steps-wrap" id="steps">${steps}</div>
+    </div>
+    <div class="lang-wrap"><button class="lang-btn" onclick="toggleLang(event)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>${lmap[lang]}</button><div class="lang-dropdown" id="ldd">${lopts}</div></div>
+  `;
+  setTimeout(()=>{const b=document.getElementById('bar');if(b)b.style.width=pct+'%';},120);
 }
 
-function renderSteps(){
-  document.getElementById('step-content').innerHTML = OS[curOs].steps(curApp);
-}
+function changeOs(v){curOs=v;curApp=null;render();}
+function selApp(id,el){document.querySelectorAll('.app-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');curApp=id;document.getElementById('steps').innerHTML=OS_CFG[curOs].steps(id,L[lang]);}
+function toggleLang(e){e.stopPropagation();document.getElementById('ldd').classList.toggle('show');}
+function setLang(l){lang=l;document.getElementById('ldd').classList.remove('show');render();}
+window.addEventListener('click',()=>{const d=document.getElementById('ldd');if(d)d.classList.remove('show');});
 
-function onOsChange(){
-  renderOs(document.getElementById('os-select').value);
+async function init(){
+  const API='https://api.neyrosubweb.com';
+  if(tg&&tg.initData){try{const r=await fetch(`${API}/api/user-info?initData=${encodeURIComponent(tg.initData)}`);const d=await r.json();if(d.ok)userInfo=d;}catch(e){}}
+  render();
 }
-
-function addSub(){
-  const link = subUrl || location.href;
-  const clashLink = 'clash://install-config?url='+encodeURIComponent(link);
-  if(tg) tg.openLink(clashLink);
-  else location.href=clashLink;
-}
-
-function copySubLink(){
-  const link = subUrl || location.href;
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(link).then(()=>showToast(LANG_DATA[currentLang].copied));
-  } else {
-    const t=document.createElement('textarea');
-    t.value=link; document.body.appendChild(t); t.select();
-    document.execCommand('copy'); document.body.removeChild(t);
-    showToast(LANG_DATA[currentLang].copied);
-  }
-}
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
-}
-
-// Запуск
-loadUserInfo();   // загружаем реальные данные с бэкенда
-renderOs('windows');
+init();
 </script>
 </body>
 </html>
